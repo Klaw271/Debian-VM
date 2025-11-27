@@ -21,7 +21,7 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.9'
-        cache: 'pip'
+        # Убрали cache: 'pip'
 
     - name: Install dependencies
       run: |
@@ -94,7 +94,7 @@ jobs:
           docker stop my-app-container || true
           docker rm my-app-container || true
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest
-          docker run -d -p 8081:80 --name my-app-container ${{ secrets.DOCKORHUB_USERNAME }}/my-app:latest
+          docker run -d -p 8081:80 --name my-app-container ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest
         "
 
     - name: Verify deployment
