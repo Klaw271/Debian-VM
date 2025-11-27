@@ -84,28 +84,21 @@ jobs:
   deploy-to-vm:
     needs: docker-build-push
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup SSH
-      uses: webfactory/ssh-agent@v0.8.0
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-    - name: Add host to known_hosts
-      run: |
-        mkdir -p ~/.ssh
-        ssh-keyscan -H 192.168.1.153 >> ~/.ssh/known_hosts
-
     - name: Deploy to server
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       run: |
-        ssh devops_user@192.168.1.153 "
+        # Простая настройка SSH
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+        chmod 600 ~/.ssh/deploy_key
+        
+        # Команда деплоя с отключенной проверкой host key
+        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/deploy_key devops_user@192.168.1.153 "
           cd ~/my_app
           docker stop my-app-container || true
-          docker rm my-app-container || true
+          docker rm my-app-container || true  
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest
           docker run -d -p 8081:80 --name my-app-container ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest
         "
