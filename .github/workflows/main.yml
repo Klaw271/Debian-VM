@@ -83,27 +83,13 @@ jobs:
 
   deploy-to-vm:
     needs: docker-build-push
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64]
     steps:
-    - name: Deploy to server
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+    - name: Deploy
       run: |
-        # Простая настройка SSH
-        mkdir -p ~/.ssh
-        echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
-        chmod 600 ~/.ssh/deploy_key
-        
-        # Команда деплоя с отключенной проверкой host key
-        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/deploy_key devops_user@192.168.1.153 "
-          cd ~/my_app
-          docker stop my-app-container || true
-          docker rm my-app-container || true  
-          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest
-          docker run -d -p 8081:80 --name my-app-container ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest
-        "
+        cd ~/my_app
+        docker stop my-app-container || true
+        docker rm my-app-container || true
+        docker pull ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest
+        docker run -d -p 8081:80 --name my-app-container ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest
 
-    - name: Verify deployment
-      run: |
-        sleep 10
-        curl -f http://192.168.1.153:8081 || exit 1
