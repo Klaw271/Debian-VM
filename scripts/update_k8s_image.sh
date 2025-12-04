@@ -8,8 +8,8 @@ if [[ -z "$IMAGE_NAME" ]]; then
   exit 1
 fi
 
-git config --global user.name 'Klaw271'
-git config --global user.email '671813@mail.ru'
+git config --global user.name 'GitHub Actions'
+git config --global user.email 'actions@github.com'
 
 # Обновляем строку image: ... строго по ключу container.name
 # Если у тебя в deployment.yml контейнер называется иначе — замени my-app-container на своё имя
