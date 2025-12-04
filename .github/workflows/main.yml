@@ -38,29 +38,15 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v5
-      with:
-        context: ./my_app
-        push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:latest
-
-    - name: Update deployment and commit changes
+    - name: Update Kubernetes deployment
       run: |
-        # Создаем новый тег с SHA коммита для уникальности
-        IMAGE_TAG="${{ secrets.DOCKERHUB_USERNAME }}/my-app:${{ github.sha }}"
+        # Ваш скрипт обновит deployment.yml и сделает коммит
+        ./scripts/update_k8s_image.sh "${{ secrets.DOCKERHUB_USERNAME }}/my-app:${{ github.sha }}"
         
-        # Выполняем ваш скрипт из папки scripts/
-        chmod +x scripts/update_k8s_image.sh
-        ./scripts/update_k8s_image.sh "$IMAGE_TAG"
-        
-        # Настраиваем Git для push (дополнение к вашему скрипту)
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "actions@github.com"
-        
-        # Push изменений в репозиторий
-        git push origin main
+        # Push коммита в репозиторий
+        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
 
+        
   deploy-to-vm:
     needs: docker-build-push
     runs-on: [self-hosted, Linux, X64]
