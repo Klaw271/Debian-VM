@@ -40,19 +40,19 @@ jobs:
 
     - name: Update Kubernetes deployment
       run: |
-        # Обновляем deployment.yml напрямую
+        # 1. Обновляем deployment
         sed -i "s|image:.*|image: ${{ secrets.DOCKERHUB_USERNAME }}/my-app:${{ github.sha }}|g" k8s/deployment.yml
         
-        # Настраиваем git
+        # 2. Настраиваем git
         git config --global user.name 'Klaw271'
         git config --global user.email '671813@mail.ru'
         
-        # Коммит
+        # 3. Коммит
         git add k8s/deployment.yml
-        git commit -m "Update image to ${{ github.sha }}" || echo "No changes"
+        git commit -m "ci: update image to ${{ github.sha }}" || echo "No changes to commit"
         
-        # Push с правильным URL
-        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:main
+        # 4. Push с явным указанием PAT_TOKEN
+        git push "https://Klaw271:${{ secrets.PAT_TOKEN }}@github.com/Klaw271/Debian-VM.git" HEAD:main
 
         
   deploy-to-vm:
