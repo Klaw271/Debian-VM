@@ -52,7 +52,7 @@ jobs:
         git commit -m "ci: update image to ${{ github.sha }}" || echo "No changes to commit"
         
         # 4. Push с явным указанием PAT_TOKEN
-        git push "https://Klaw271:${{ secrets.PAT_TOKEN }}@github.com/Klaw271/Debian-VM.git" HEAD:main
+        git push "https://x-access-token:${PAT_TOKEN}@github.com/Klaw271/Debian-VM.git" HEAD:main
 
         
   deploy-to-vm:
