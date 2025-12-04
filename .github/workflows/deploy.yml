@@ -31,37 +31,11 @@ jobs:
           chmod +x scripts/update_k8s_image.sh
           ./scripts/update_k8s_image.sh ${{ env.IMAGE_NAME }}
 
-      - name: Debug PAT access
+      - name: Force push (если уверены)
         env:
           PAT: ${{ secrets.GH_PAT }}
         run: |
-          echo "=== Debug PAT ==="
-          echo "PAT exists: ${{ secrets.GH_PAT != '' }}"
-          echo "PAT starts with: ${PAT:0:10}..."
-          echo "Repository: ${{ github.repository }}"
-          
-          # Проверка аутентификации
-          echo "=== Testing authentication ==="
-          curl -s -H "Authorization: token $PAT" \
-            https://api.github.com/user | jq '.login' || echo "Auth failed"
-            
-          # Проверка доступа к репозиторию
-          echo "=== Testing repository access ==="
-          curl -s -H "Authorization: token $PAT" \
-            https://api.github.com/repos/${{ github.repository }} \
-            | jq '{name: .name, permissions: .permissions}' || echo "Repo access failed"
-            
-      - name: Push with debug
-        env:
-          PAT: ${{ secrets.GH_PAT }}
-        run: |
-          # Показываем команду которая выполняется
-          echo "Running: git push https://x-access-token:${PAT:0:10}...@github.com/${{ github.repository }} HEAD:main"
-          
-          # Выполняем push с подробным выводом
-          GIT_CURL_VERBOSE=1 GIT_TRACE=1 git push \
-            "https://x-access-token:$PAT@github.com/${{ github.repository }}" \
-            HEAD:main
+          git push --force "https://x-access-token:$PAT@github.com/${{ github.repository }}" HEAD:main
 
   deploy-to-k8s:
     needs: docker-build-push
