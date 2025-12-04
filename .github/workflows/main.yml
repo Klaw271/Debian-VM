@@ -52,7 +52,7 @@ jobs:
         
         # Выполняем ваш скрипт
         chmod +x update_k8s_image.sh
-        ./update_k8s_image.sh "$IMAGE_TAG"
+        ./scripts/update_k8s_image.sh "$IMAGE_TAG"
         
         # Настраиваем Git для push (дополнение к вашему скрипту)
         git config --global user.name "GitHub Actions"
