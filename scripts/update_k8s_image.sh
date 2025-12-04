@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 IMAGE_NAME="${1:-}"
-K8S_DEPLOYMENT_FILE="k8s/deployment.yml"
+K8S_DEPLOYMENT_FILE="./k8s/deployment.yml"
 
 if [[ -z "$IMAGE_NAME" ]]; then
   echo "Usage: ./scripts/update_k8s_image.sh <image:tag>"

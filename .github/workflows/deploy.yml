@@ -21,7 +21,7 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          IMAGE_NAME=password27/my-app:${{ github.sha }}
+          IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/my-app:${{ github.sha }}
           docker build -t $IMAGE_NAME .
           docker push $IMAGE_NAME
           echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
@@ -56,5 +56,5 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
-          kubectl apply -f k8s/deployment.yml
-          kubectl apply -f k8s/service.yml
+          kubectl apply -f ./k8s/deployment.yml
+          kubectl apply -f ./k8s/service.yml
