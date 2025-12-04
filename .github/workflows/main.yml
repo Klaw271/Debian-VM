@@ -40,6 +40,13 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        push: true
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest
+
     - name: Update Kubernetes deployment
       env:
         # Явно передаем токен
@@ -71,14 +78,9 @@ jobs:
     steps:
     - name: Deploy from exact directory
       run: |
-        cd /home/devops_user/Debian-VM/my_app
-        echo "Рабочая директория: $(pwd)"
-        echo "Содержимое:"
-        ls -la
+        docker pull ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest
         docker stop my-app-container 2>/dev/null || echo "Контейнер не был запущен"
         docker rm my-app-container 2>/dev/null || echo "Контейнер не найден"
-        echo "Скачиваем новый образ..."
-        docker pull ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest
         echo "Запускаем новый контейнер..."
         docker run -d \
           -p 0.0.0.0:8081:80 \
