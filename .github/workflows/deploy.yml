@@ -33,7 +33,7 @@ jobs:
 
       - name: Push commit back to repo
         run: |
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Klaw271/Debian-VM.git
           git push origin HEAD:main
 
   deploy-to-k8s:
