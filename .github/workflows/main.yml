@@ -40,6 +40,9 @@ jobs:
 
     - name: Update Kubernetes deployment
       run: |
+        # Даем права на выполнение
+        chmod +x scripts/update_k8s_image.sh
+        
         # Ваш скрипт обновит deployment.yml и сделает коммит
         ./scripts/update_k8s_image.sh "${{ secrets.DOCKERHUB_USERNAME }}/my-app:${{ github.sha }}"
         
