@@ -31,11 +31,9 @@ jobs:
           chmod +x scripts/update_k8s_image.sh
           ./scripts/update_k8s_image.sh ${{ env.IMAGE_NAME }}
 
-      - name: Force push (если уверены)
-        env:
-          PAT: ${{ secrets.GH_PAT }}
+      - name: Push commit back to repo
         run: |
-          git push --force "https://x-access-token:$PAT@github.com/${{ github.repository }}" HEAD:main
+          git push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" HEAD:main
 
   deploy-to-k8s:
     needs: docker-build-push
