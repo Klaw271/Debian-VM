@@ -16,3 +16,4 @@ else
   git commit -m "Update Kubernetes image to ${IMAGE_NAME}"
   # Для отправки коммита, нужно настроить Git credentials в GitHub Actions (например, PAT)
   # git push origin main
+fi 
