@@ -101,23 +101,26 @@ jobs:
         fi
 
   deploy-to-k8s:
-    needs: docker-build-push # Запускать после публикации образа
-    runs-on: [self-hosted, Linux, X64]
+    needs: docker-build-push
+    runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Kubectl
-      uses: azure/setup-kubectl@v3
-      env:
-        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }} # Используем секрет
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
 
-    - name: Deploy to Kubernetes
-      run: |
-        # Обновляем образ в deployment.yml на актуальную версию
-        sed -i "s|image:.*|image: ${{ secrets.DOCKERHUB_USERNAME }}/my-app:${{ github.sha }}|g" k8s/deployment.yml
-        # cat k8s/deployment.yml # Для отладки
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 -d > ~/.kube/config
 
-        kubectl apply -f k8s/deployment.yml
-        kubectl apply -f k8s/service.yml
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f k8s/deployment.yml
+          kubectl apply -f k8s/service.yml
+
 
