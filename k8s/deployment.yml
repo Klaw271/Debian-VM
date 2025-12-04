@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: my-app-container
-        image: password27/my-app:latest  # ← ВАШ ОБРАЗ!
+        image: password27/my-app:00480e70ffd48e91d3044ce68b628a7e99665cb0
         ports:
         - containerPort: 80
