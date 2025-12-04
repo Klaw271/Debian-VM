@@ -45,13 +45,13 @@ jobs:
         push: true
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:latest
 
-    - name: Update Kubernetes deployment and commit
+    - name: Update deployment and commit changes
       run: |
         # Создаем новый тег с SHA коммита для уникальности
-        IMAGE_TAG="${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}"
+        IMAGE_TAG="${{ secrets.DOCKERHUB_USERNAME }}/my-app:${{ github.sha }}"
         
-        # Выполняем ваш скрипт
-        chmod +x update_k8s_image.sh
+        # Выполняем ваш скрипт из папки scripts/
+        chmod +x scripts/update_k8s_image.sh
         ./scripts/update_k8s_image.sh "$IMAGE_TAG"
         
         # Настраиваем Git для push (дополнение к вашему скрипту)
