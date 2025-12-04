@@ -6,6 +6,8 @@ on:
 jobs:
   docker-build-push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # ← КЛЮЧЕВАЯ СТРОКА
 
     steps:
       - name: Checkout repository
