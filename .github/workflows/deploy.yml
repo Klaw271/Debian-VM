@@ -5,7 +5,7 @@ on:
 
 jobs:
   docker-build-push:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     permissions:
       contents: write  # ←КЛЮЧЕВАЯ СТРОКА
 
@@ -39,7 +39,7 @@ jobs:
 
   deploy-to-k8s:
     needs: docker-build-push
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       - name: Checkout code
