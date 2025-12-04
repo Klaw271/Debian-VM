@@ -40,14 +40,19 @@ jobs:
 
     - name: Update Kubernetes deployment
       run: |
-        # Даем права на выполнение
-        chmod +x scripts/update_k8s_image.sh
+        # Обновляем deployment.yml напрямую
+        sed -i "s|image:.*|image: ${{ secrets.DOCKERHUB_USERNAME }}/my-app:${{ github.sha }}|g" k8s/deployment.yml
         
-        # Ваш скрипт обновит deployment.yml и сделает коммит
-        ./scripts/update_k8s_image.sh "${{ secrets.DOCKERHUB_USERNAME }}/my-app:${{ github.sha }}"
+        # Настраиваем git
+        git config --global user.name 'Klaw271'
+        git config --global user.email '671813@mail.ru'
         
-        # Push коммита в репозиторий
-        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
+        # Коммит
+        git add k8s/deployment.yml
+        git commit -m "Update image to ${{ github.sha }}" || echo "No changes"
+        
+        # Push с правильным URL
+        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:main
 
         
   deploy-to-vm:
